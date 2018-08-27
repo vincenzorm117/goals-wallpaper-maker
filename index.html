@@ -10,30 +10,75 @@
 </head>
 <body>
     <div class="container">
-        <div class="box" data-index="0" contenteditable="true"></div>
-        <div class="box" data-index="1" contenteditable="true"></div>
-        <div class="box" data-index="2" contenteditable="true"></div>
+        <div class="box" contenteditable="true"></div>
+        <div class="box" contenteditable="true"></div>
+        <div class="box" contenteditable="true"></div>
     </div>
+    <div class="change-color"></div>
+
+    <script src="./node_modules/randomcolor/randomColor.js"></script>
     <script>
         var boxes = document.querySelectorAll('.box');
         var goals = JSON.parse(window.localStorage.getItem('goals'));
         if( Array.isArray(goals) ) {
-            boxes[0].innerHTML = goals[0];
-            boxes[1].innerHTML = goals[1];
-            boxes[2].innerHTML = goals[2];
+            boxes[0].innerText = goals[0];
+            boxes[1].innerText = goals[1];
+            boxes[2].innerText = goals[2];
         } else {
             goals = ['','',''];
         }
 
+        for(let i = 0; i < boxes.length; i++) {
+            boxes[i].addEventListener('paste', function(e){
+                e.preventDefault()
+                let paste = (e.clipboardData || window.clipboardData).getData('text');
+                try {
+                    paste = paste.toString();
+                } catch(e){}
+                console.log(paste)
+                e.target.innerHTML = paste;
+            })
+        }
 
-        boxes.forEach((boxElement) => {
-            boxElement.addEventListener('keydown', function(e){
-                var html = e.target.innerHTML;
-                var index = parseInt(e.target.getAttribute('data-index'));
-                goals[index] = html;
+        setInterval(() => {
+            var isDifferent = false;
+            for(let i = 0; i < boxes.length; i++) {
+                if( goals[i] != boxes[i].innerText ) {
+                   isDifferent = true; 
+                }
+                goals[i] = boxes[i].innerText;
+            }
+            if( isDifferent ) {
                 window.localStorage.setItem('goals', JSON.stringify(goals));
-            });
-        })
+            }
+        }, 100);
+
+        
+
+        function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        var container = document.querySelector('.container');
+        document.querySelector('.change-color').addEventListener('click', (e) => {
+            var color = '#' + Math.floor(Math.random()*16777215).toString(16);
+            var otherColor = randomColor({ count: 1, hue: color });
+
+            var rgb = hexToRgb(otherColor);
+            var bwColor = (Math.max(rgb.r,rgb.g,rgb.b) + Math.min(rgb.r,rgb.g,rgb.b))/2;
+            bwColor = bwColor < 128 ? 0 : 255;
+            var textColor = `rgb(${bwColor},${bwColor},${bwColor})`;
+            container.style.background = color;
+            for(let i = 0; i < boxes.length; i++) {
+                boxes[i].style.background = otherColor;
+                boxes[i].style.color = textColor;
+            }
+        });
     </script>
 </body>
 </html>

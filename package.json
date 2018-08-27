@@ -1,0 +1,23 @@
+{
+  "name": "goals-wallpaper-maker",
+  "version": "1.0.0",
+  "description": "Simple web page that creates a wallpaper of 3 goals",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vincenzorm117/goals-wallpaper-maker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vincenzorm117/goals-wallpaper-maker/issues"
+  },
+  "homepage": "https://github.com/vincenzorm117/goals-wallpaper-maker#readme",
+  "dependencies": {
+    "randomcolor": "^0.5.3"
+  }
+}
