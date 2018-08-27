@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/vincenzorm117/goals-wallpaper-maker#readme",
   "dependencies": {
+    "dom-to-image": "^2.6.0",
     "randomcolor": "^0.5.3"
   }
 }
