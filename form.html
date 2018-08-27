@@ -29,6 +29,11 @@
                 <input type="radio" name="type" value="0">
                 <label for="0">Other</label>
             </div>
+            <div>
+                <label for="">Background</label><br><br>
+                <input type="file" name="background">
+            </div>
+            <hr>
             <input type="submit" value="Submit">
             <button class="cancel">Cancel</button>
         </form>
@@ -38,8 +43,21 @@
     <script src="./node_modules/dom-to-image/dist/dom-to-image.min.js"></script>
     <script src="./node_modules/randomcolor/randomColor.js"></script>
     <script>
-        var boxes = document.querySelectorAll('.box');
+        // Declare all variables
         var goals = JSON.parse(window.localStorage.getItem('goals'));
+        var deviceTypes = {
+            '1': [375,812], // iPhone X
+        }
+        // Declare all element variables
+        var boxes = document.querySelectorAll('.box');
+        var container = document.querySelector('.container');
+        var popup = document.querySelector('.popup');
+        var form = document.querySelector('form');
+        var downloadLink = popup.querySelector('[download]');
+        var cancelButton = document.querySelector('.cancel');
+        var backgroundInput = document.querySelector('input[type="file"]');
+        
+        // Initialize goals with previously entered goals.
         if( Array.isArray(goals) ) {
             boxes[0].innerText = goals[0];
             boxes[1].innerText = goals[1];
@@ -48,6 +66,7 @@
             goals = ['','',''];
         }
 
+        // On clipboard paste to boxes remove all formatting.
         for(let i = 0; i < boxes.length; i++) {
             boxes[i].addEventListener('paste', function(e){
                 e.preventDefault()
@@ -55,11 +74,11 @@
                 try {
                     paste = paste.toString();
                 } catch(e){}
-                console.log(paste)
                 e.target.innerHTML = paste;
             })
         }
-
+        
+        // Constantly save all goals to localStorage
         setInterval(() => {
             var isDifferent = false;
             for(let i = 0; i < boxes.length; i++) {
@@ -73,23 +92,34 @@
             }
         }, 100);
 
-        var container = document.querySelector('.container');
-        var popup = document.querySelector('.popup');
-        var form = document.querySelector('form');
-        var downloadLink = popup.querySelector('[download]');
-        var cancelButton = document.querySelector('.cancel');
-        document.querySelector('.change-color').addEventListener('click', (e) => {  popup.classList.add('active');  });
+        // Setup listener to open the popup.
+        document.querySelector('.change-color').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            popup.classList.add('active');  
+        });
+
+        // Setup listener to close the popup.
         cancelButton.addEventListener('click', (e) => {  
+            e.preventDefault();
+            e.stopPropagation();
             popup.classList.remove('active');  
             downloadLink.classList.remove('active');
         });
-        
-        var deviceTypes = {
-            '1': [375,812], // iPhone X
-        }
 
+        // Setup listener to update the background.
+        backgroundInput.addEventListener('change', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            let url = window.URL.createObjectURL(e.target.files[0]);
+            container.style.backgroundImage = `url("${url}")`;
+        })
+        
+        
+        // Hijack form submission
         form.addEventListener('submit', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             var form = new FormData(e.target);
             var type = form.get('type');
             if( type == '1' ) {
@@ -110,33 +140,10 @@
                 let url = window.URL.createObjectURL(blob);
                 downloadLink.href = url;
                 downloadLink.classList.add('active')
+                downloadLink.click();
             });
         });
 
-        // function hexToRgb(hex) {
-        //     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        //     return result ? {
-        //         r: parseInt(result[1], 16),
-        //         g: parseInt(result[2], 16),
-        //         b: parseInt(result[3], 16)
-        //     } : null;
-        // }
-
-        // var container = document.querySelector('.container');
-        // document.querySelector('.change-color').addEventListener('click', (e) => {
-        //     var color = '#' + Math.floor(Math.random()*16777215).toString(16);
-        //     var otherColor = randomColor({ count: 1, hue: color });
-
-        //     var rgb = hexToRgb(otherColor);
-        //     var bwColor = (Math.max(rgb.r,rgb.g,rgb.b) + Math.min(rgb.r,rgb.g,rgb.b))/2;
-        //     bwColor = bwColor < 128 ? 0 : 255;
-        //     var textColor = `rgb(${bwColor},${bwColor},${bwColor})`;
-        //     container.style.background = color;
-        //     for(let i = 0; i < boxes.length; i++) {
-        //         boxes[i].style.background = otherColor;
-        //         boxes[i].style.color = textColor;
-        //     }
-        // });
     </script>
 </body>
 </html>
