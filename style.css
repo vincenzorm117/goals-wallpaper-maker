@@ -54,7 +54,7 @@ table {
 
 * {
     box-sizing: border-box;
-    font-family: 'Playfair Display', serif;
+    font-family: 'M PLUS Rounded 1c', sans-serif !important;
 }
 
 
@@ -83,6 +83,8 @@ table {
     background: #FAFAFA;
     outline:0;
     border: 1px solid transparent;
+    line-height: 1.3em;
+    letter-spacing: 0.2px;
 }
 
 .box:focus {
